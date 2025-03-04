@@ -34,7 +34,8 @@
     "build:watch": "vite build --watch",
     "storybook": "storybook dev -p 9009",
     "build:storybook": "storybook build -o docs",
-    "prepublishOnly": "vite build"
+    "prepublishOnly": "vite build",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@ant-design/icons": "5.5.1",
@@ -44,9 +45,9 @@
     "@codemirror/lint": "^6.8.2",
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.34.1",
-    "@gorules/lezer-zen": "workspace:*",
-    "@gorules/lezer-zen-template": "workspace:*",
-    "@gorules/zen-engine-wasm": "workspace:*",
+    "@gorules/lezer-zen": "file:../lezer-zen",
+    "@gorules/lezer-zen-template": "file:../lezer-zen-template",
+    "@gorules/zen-engine-wasm": "file:../zen-engine-wasm",
     "@lezer/common": "^1.2.2",
     "@lezer/highlight": "^1.2.1",
     "@lezer/lr": "^1.4.2",

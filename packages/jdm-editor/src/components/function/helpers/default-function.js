@@ -1,6 +1,9 @@
 import zen from 'zen';
 
-/** @type {Handler} **/
+/**
+ * @param {InputSchema & Object.<string, any>} input
+ * @returns {Promise<any>}
+ */
 export const handler = async (input) => {
   return input;
 };

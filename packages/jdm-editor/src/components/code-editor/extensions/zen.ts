@@ -16,10 +16,13 @@ import { NodeProp, type SyntaxNode, parseMixed } from '@lezer/common';
 import { tags as t } from '@lezer/highlight';
 import { match } from 'ts-pattern';
 
-import completion from '../../../completion.json';
+import baseCompletion from '../../../completion.json';
 import { renderDiagnosticMessage } from './diagnostic';
 import { zenLinter } from './linter';
 import { buildTypeCompletion, typeField, zenKindToString } from './types';
+import { SchemaSelectProps } from '../../../helpers/components';
+
+let completion = baseCompletion;
 
 export const applyCompletion = (view: EditorView, completion: Completion, from: number, to: number) => {
   const transaction = match(completion.type)
@@ -40,15 +43,6 @@ export const applyCompletion = (view: EditorView, completion: Completion, from: 
 
   view.dispatch(transaction);
 };
-
-const extendedCompletion = completion.map(
-  (c) =>
-    ({
-      ...c,
-      detail: c.detail.replaceAll('`', ''),
-      apply: applyCompletion,
-    }) satisfies Completion,
-);
 
 const hasAutoComplete = (n: SyntaxNode | null): boolean => {
   if (!n) {
@@ -73,6 +67,14 @@ const makeExpressionCompletion =
     ) {
       return null;
     }
+
+    const extendedCompletion = completion.map((c) =>
+      ({
+        ...c,
+        detail: c.detail.replaceAll('`', ''),
+        apply: applyCompletion,
+      }) satisfies Completion,
+    );
 
     const from = word?.from ?? context.pos;
     switch (node.name) {
@@ -148,10 +150,18 @@ const hoverSpan = (node: SyntaxNode): [number, number] | null => {
   return [firstNode.from, lastNode.to];
 };
 
-export const completionExtension = () =>
-  autocompletion({
+export const completionExtension = (schema: SchemaSelectProps[] = []) => {
+  const schemaCompletion = schema.map(({field, name}) => ({
+    "label": field,
+    "type": "variable",
+    "detail": name || "",
+    "info": ""
+  }));
+  completion = [...baseCompletion, ...schemaCompletion];
+  return autocompletion({
     override: [makeExpressionCompletion()],
   });
+}
 
 export const hoverExtension = () =>
   hoverTooltip((view, pos) => {
@@ -262,12 +272,13 @@ const zenTemplateLanguage = new LanguageSupport(
 type extensionOptions = {
   type: 'unary' | 'standard' | 'template';
   lint?: boolean;
+  schema: SchemaSelectProps[];
 };
 
-export const zenExtensions = ({ type, lint = true }: extensionOptions) =>
+export const zenExtensions = ({ type, lint = true, schema }: extensionOptions) =>
   [
     type !== 'template' ? zenLanguage : zenTemplateLanguage,
-    completionExtension(),
+    completionExtension(schema),
     hoverExtension(),
     closeBrackets(),
     lint && zenLinter(type),

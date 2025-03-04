@@ -9,6 +9,7 @@ import { match } from 'ts-pattern';
 import type { StoreApi, UseBoundStore } from 'zustand';
 import { create } from 'zustand';
 
+import { SchemaSelectProps } from '../../../helpers/components';
 import type { CodeEditorProps } from '../../code-editor';
 import { calculateDiffGraph } from '../dg-diff-util';
 import type { DecisionEdge, DecisionGraphType, DecisionNode } from '../dg-types';
@@ -59,6 +60,9 @@ export type DecisionGraphStoreType = {
     panels?: PanelType[];
     activePanel?: string;
     onPanelsChange?: (val?: string) => void;
+
+    inputsSchema?: SchemaSelectProps[];
+    outputsSchema?: SchemaSelectProps[];
 
     simulate?: Simulation;
 

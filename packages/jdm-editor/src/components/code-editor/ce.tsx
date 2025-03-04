@@ -8,6 +8,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { match } from 'ts-pattern';
 
 import { composeRefs } from '../../helpers/compose-refs';
+import { useDecisionGraphState } from '../decision-graph';
 import { isWasmAvailable } from '../../helpers/wasm';
 import './ce.scss';
 import {
@@ -77,6 +78,11 @@ export const CodeEditor = React.forwardRef<HTMLDivElement, CodeEditorProps>(
     const codeMirror = useRef<EditorView>(null);
     const { token } = theme.useToken();
 
+    const { inputsSchema, outputsSchema } = useDecisionGraphState(
+      ({ inputsSchema = [], outputsSchema = [] }) => ({ inputsSchema, outputsSchema }),
+    );
+    const schema = [...inputsSchema, ...outputsSchema];
+
     const compartment = useMemo(
       () => ({
         zenExtension: new Compartment(),
@@ -101,7 +107,7 @@ export const CodeEditor = React.forwardRef<HTMLDivElement, CodeEditorProps>(
           extensions: [
             EditorView.lineWrapping,
             bracketMatching(),
-            compartment.zenExtension.of(zenExtensions({ type, lint })),
+            compartment.zenExtension.of(zenExtensions({ type, lint, schema })),
             compartment.updateListener.of(updateListener(onChange, onStateChange)),
             compartment.theme.of(editorTheme(token.mode === 'dark')),
             compartment.placeholder.of(placeholder ? placeholderExt(placeholder) : []),
@@ -185,7 +191,7 @@ export const CodeEditor = React.forwardRef<HTMLDivElement, CodeEditorProps>(
 
       codeMirror.current.dispatch({
         effects: [
-          compartment.zenExtension.reconfigure(zenExtensions({ type, lint })),
+          compartment.zenExtension.reconfigure(zenExtensions({ type, lint, schema })),
           updateExpressionTypeEffect.of(
             match(type)
               .with('unary', () => 'unary' as const)
@@ -193,7 +199,7 @@ export const CodeEditor = React.forwardRef<HTMLDivElement, CodeEditorProps>(
           ),
         ],
       });
-    }, [type, lint]);
+    }, [type, lint, schema]);
 
     useEffect(() => {
       if (!codeMirror.current) {

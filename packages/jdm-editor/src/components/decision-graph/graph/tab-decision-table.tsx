@@ -16,8 +16,8 @@ export type TabDecisionTableProps = {
 export const TabDecisionTable: React.FC<TabDecisionTableProps> = ({ id, manager }) => {
   const graphActions = useDecisionGraphActions();
   const nodeType = useNodeType(id, { attachGlobals: false });
-  const { nodeTrace, disabled, configurable, content, globalType } = useDecisionGraphState(
-    ({ simulate, disabled, configurable, decisionGraph, globalType }) => ({
+  const { nodeTrace, disabled, configurable, content, globalType, inputsSchema, outputsSchema } = useDecisionGraphState(
+    ({ simulate, disabled, configurable, decisionGraph, globalType, inputsSchema, outputsSchema }) => ({
       nodeTrace: match(simulate)
         .with({ result: P._ }, ({ result }) => result?.trace?.[id] as SimulationTrace<SimulationTraceDataTable>)
         .otherwise(() => null),
@@ -25,6 +25,8 @@ export const TabDecisionTable: React.FC<TabDecisionTableProps> = ({ id, manager 
       configurable,
       content: (decisionGraph?.nodes ?? []).find((node) => node.id === id)?.content as NodeDecisionTableData,
       globalType,
+      inputsSchema,
+      outputsSchema,
     }),
   );
 
@@ -60,6 +62,8 @@ export const TabDecisionTable: React.FC<TabDecisionTableProps> = ({ id, manager 
       configurable={configurable}
       inputData={computedType}
       activeRules={(activeRules || []).filter((id) => !!id)}
+      inputsSchema={inputsSchema}
+      outputsSchema={outputsSchema}
       onChange={(val) => {
         graphActions.updateNode(id, (draft) => {
           Object.assign(draft.content, val);
