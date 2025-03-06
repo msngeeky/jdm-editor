@@ -1,3 +1,4 @@
+import { apiRequestSpecification } from './api-request.specification';
 import { decisionTableSpecification } from './decision-table.specification';
 import { expressionSpecification } from './expression.specification';
 import { functionSpecification } from './function.specification';
@@ -22,4 +23,5 @@ export const nodeSpecification = makeNodeSpecification({
   [NodeKind.Expression]: expressionSpecification,
   [NodeKind.Function]: functionSpecification,
   [NodeKind.Switch]: switchSpecification,
+  [NodeKind.ApiRequest]: apiRequestSpecification,
 });

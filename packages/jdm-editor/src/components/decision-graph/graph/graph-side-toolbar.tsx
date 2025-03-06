@@ -3,6 +3,7 @@ import type { MenuProps } from 'antd';
 import { Button, Dropdown, Tooltip, message } from 'antd';
 import React, { useRef } from 'react';
 
+import { apiRequestToFunction } from '../../../helpers/api-request-to-function';
 import { exportExcelFile, readFromExcel } from '../../../helpers/excel-file-utils';
 import { decisionModelSchema } from '../../../helpers/schema';
 import { useDecisionGraphActions, useDecisionGraphRaw, useDecisionGraphState } from '../context/dg-store.context';
@@ -113,40 +114,48 @@ export const GraphSideToolbar: React.FC<GraphSideToolbarProps> = () => {
       message.error('Failed to upload Excel!');
     }
   };
+const downloadJDM = async () => {
+  try {
+    const { name } = decisionGraphRaw.stateStore.getState();
+    const { decisionGraph } = decisionGraphRaw.stateStore.getState();
 
-  const downloadJDM = async () => {
-    try {
-      const { name } = decisionGraphRaw.stateStore.getState();
-      const { decisionGraph } = decisionGraphRaw.stateStore.getState();
-      // create file in browser
-      const fileName = `${name.replaceAll('.json', '')}.json`;
-      const json = JSON.stringify(
-        {
-          contentType: DecisionContentType,
-          nodes: decisionGraph.nodes,
-          edges: decisionGraph.edges,
-          settings: decisionGraph.settings,
-        },
-        null,
-        2,
-      );
-      const blob = new Blob([json], { type: 'application/json' });
-      const href = URL.createObjectURL(blob);
+    // Convert API request nodes to function nodes
+    const processedNodes = decisionGraph.nodes.map(node => {
+      if (node.type === NodeKind.ApiRequest) {
+        return apiRequestToFunction(node);
+      }
+      return node;
+    });
 
-      // create "a" HTLM element with href to file
-      const link = window.document.createElement('a');
-      link.href = href;
-      link.download = fileName;
-      window.document.body.appendChild(link);
-      link.click();
+    // create file in browser
+    const fileName = `${name.replaceAll('.json', '')}.json`;
+    const json = JSON.stringify(
+      {
+        contentType: DecisionContentType,
+        nodes: processedNodes,
+        edges: decisionGraph.edges,
+        settings: decisionGraph.settings,
+      },
+      null,
+      2,
+    );
+    const blob = new Blob([json], { type: 'application/json' });
+    const href = URL.createObjectURL(blob);
 
-      // clean up "a" element & remove ObjectURL
-      window.document.body.removeChild(link);
-      URL.revokeObjectURL(href);
-    } catch (e: any) {
-      message.error(e.message);
-    }
-  };
+    // create "a" HTLM element with href to file
+    const link = window.document.createElement('a');
+    link.href = href;
+    link.download = fileName;
+    window.document.body.appendChild(link);
+    link.click();
+
+    // clean up "a" element & remove ObjectURL
+    window.document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  } catch (e: any) {
+    message.error(e.message);
+  }
+};
 
   const downloadJDMExcel = async (name: string = 'decision tables') => {
     try {

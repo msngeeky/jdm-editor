@@ -14,6 +14,7 @@ import { Graph } from './graph/graph';
 import { GraphSideToolbar } from './graph/graph-side-toolbar';
 import type { GraphTabsProps } from './graph/graph-tabs';
 import { GraphTabs } from './graph/graph-tabs';
+import { apiRequestSpecification } from './nodes/specifications/api-request.specification';
 import { decisionTableSpecification } from './nodes/specifications/decision-table.specification';
 import { expressionSpecification } from './nodes/specifications/expression.specification';
 import { functionSpecification } from './nodes/specifications/function.specification';
@@ -90,7 +91,7 @@ const TabContents: React.FC = React.memo(() => {
             )
             .with(NodeKind.Input, () => inputSpecification?.renderTab?.({ id: node?.id, manager: dndManager }))
             .with(NodeKind.Output, () => outputSpecification?.renderTab?.({ id: node?.id, manager: dndManager }))
-
+            .with(NodeKind.ApiRequest, () => apiRequestSpecification?.renderTab?.({ id: node?.id, manager: dndManager }))
             .otherwise(() => {
               const component = components.find((cmp) => cmp.type === node.type);
               if (component) {

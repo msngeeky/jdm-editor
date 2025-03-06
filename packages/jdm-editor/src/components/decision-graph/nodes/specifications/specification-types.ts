@@ -13,6 +13,7 @@ export enum NodeKind {
   Function = 'functionNode',
   Expression = 'expressionNode',
   Switch = 'switchNode',
+  ApiRequest = 'apiRequestNode',
 }
 
 export type MinimalNodeProps = Pick<NodeProps, 'id' | 'data' | 'selected'>;
