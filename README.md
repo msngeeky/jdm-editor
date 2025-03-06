@@ -11,15 +11,15 @@ Whether you’re a developer, data analyst, or decision model expert, JDM Editor
 ## Installation
 
 ```bash
-npm i @gorules/jdm-editor
+npm i @msngeeky/jdm-editor
 ```
 
 ## Usage
 
 ```typescript
 ...
-import '@gorules/jdm-editor/dist/style.css';
-import { DecisionGraph, JdmConfigProvider } from '@gorules/jdm-editor';
+import '@msngeeky/jdm-editor/dist/style.css';
+import { DecisionGraph, JdmConfigProvider } from '@msngeeky/jdm-editor';
 ...
 
 <JdmConfigProvider>

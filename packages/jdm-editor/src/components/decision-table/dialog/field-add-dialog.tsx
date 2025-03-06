@@ -27,6 +27,9 @@ export const FieldAdd: React.FC<FieldAddProps> = (props) => {
   useEffect(() => {
     if (isOpen) {
       form.resetFields();
+      if (schema) {
+        console.log(JSON.stringify(schema, null, 2));
+      }
     }
   }, [isOpen, form]);
 
@@ -60,7 +63,7 @@ export const FieldAdd: React.FC<FieldAddProps> = (props) => {
         }}
       >
         {schema && (
-          <Form.Item label={'Choose from list'}>
+          <Form.Item label={'Choose from business object'}>
             <Cascader
               fieldNames={{ label: 'name', value: 'field', children: 'items' }}
               options={schema}

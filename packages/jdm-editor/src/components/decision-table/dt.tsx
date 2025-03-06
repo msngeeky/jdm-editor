@@ -60,7 +60,20 @@ export const DecisionTable: React.FC<DecisionTableProps> = ({
     <div ref={ref} className={'grl-dt'} style={{ background: token.colorBgElevated }}>
       {ref.current && (
         <DndProvider {...dndProps}>
-          <DecisionTableProvider>
+          <DecisionTableProvider
+            inputsSchema={props.inputsSchema}
+            outputsSchema={props.outputsSchema}
+            value={props.value}
+            disabled={props.disabled}
+            configurable={props.configurable}
+            disableHitPolicy={props.disableHitPolicy}
+            inputData={props.inputData}
+            inputVariableType={props.inputVariableType}
+            activeRules={props.activeRules}
+            onChange={props.onChange}
+            cellRenderer={props.cellRenderer}
+            onColumnResize={props.onColumnResize}
+          >
             <DecisionTableDialogProvider getContainer={mountDialogsOnBody ? undefined : getContainer}>
               <DecisionTableCommandBar />
               <Table id={id} maxHeight={tableHeight} />

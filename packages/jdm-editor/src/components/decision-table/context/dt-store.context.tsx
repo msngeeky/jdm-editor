@@ -1,13 +1,14 @@
 import type { VariableType } from '@gorules/zen-engine-wasm';
 import equal from 'fast-deep-equal/es6/react';
 import { produce } from 'immer';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import type { StoreApi, UseBoundStore } from 'zustand';
 import { create } from 'zustand';
 
 import type { SchemaSelectProps } from '../../../helpers/components';
 import type { Diff, DiffMetadata } from '../../decision-graph/dg-types';
 import type { TableCellProps } from '../table/table-default-cell';
+import { json } from 'stream/consumers';
 
 export type TableExportOptions = {
   name: string;
@@ -176,34 +177,59 @@ const DecisionTableStoreContext = React.createContext<{
 }>({} as any);
 
 export type DecisionTableContextProps = {
-  //
+  inputsSchema?: SchemaSelectProps[];
+  outputsSchema?: SchemaSelectProps[];
+  value?: DecisionTableType;
+  disabled?: boolean;
+  configurable?: boolean;
+  disableHitPolicy?: boolean;
+  inputData?: unknown;
+  inputVariableType?: VariableType;
+  activeRules?: string[];
+  onChange?: (val: DecisionTableType) => void;
+  cellRenderer?: (props: TableCellProps) => React.ReactNode | null | undefined;
+  onColumnResize?: () => void;
 };
 
 export const DecisionTableProvider: React.FC<React.PropsWithChildren<DecisionTableContextProps>> = (props) => {
-  const { children } = props;
+  const {
+    children,
+    inputsSchema,
+    outputsSchema,
+    value,
+    disabled = false,
+    configurable = true,
+    disableHitPolicy = false,
+    inputData,
+    inputVariableType,
+    activeRules = [],
+    onChange,
+    cellRenderer,
+    onColumnResize
+  } = props;
 
   const stateStore = useMemo(
     () =>
       create<DecisionTableStoreType['state']>(() => ({
         id: undefined,
         name: undefined,
-        decisionTable: parseDecisionTable(),
+        decisionTable: parseDecisionTable(value),
         cursor: null,
-        activeRules: [],
+        activeRules: activeRules || [],
 
-        disabled: false,
-        configurable: true,
-        disableHitPolicy: false,
+        disabled: disabled || false,
+        configurable: configurable || true,
+        disableHitPolicy: disableHitPolicy || false,
 
         colWidth: 200,
         minColWidth: 150,
 
-        inputsSchema: undefined,
-        outputsSchema: undefined,
+        inputsSchema,
+        outputsSchema,
 
         derivedVariableTypes: {},
-        inputVariableType: undefined,
-        inputData: undefined,
+        inputVariableType,
+        inputData,
       })),
     [],
   );
@@ -211,8 +237,9 @@ export const DecisionTableProvider: React.FC<React.PropsWithChildren<DecisionTab
   const listenerStore = useMemo(
     () =>
       create<DecisionTableStoreType['listeners']>(() => ({
-        onChange: undefined,
-        cellRenderer: undefined,
+        onChange,
+        cellRenderer,
+        onColumnResize,
       })),
     [],
   );
@@ -380,6 +407,41 @@ export const DecisionTableProvider: React.FC<React.PropsWithChildren<DecisionTab
     }),
     [],
   );
+
+  // Update state when props change
+  useEffect(() => {
+    console.log(JSON.stringify({ inputsSchema, outputsSchema, value, disabled, configurable, disableHitPolicy, activeRules, inputVariableType, inputData }));
+    stateStore.setState({
+      inputsSchema,
+      outputsSchema,
+      decisionTable: parseDecisionTable(value),
+      disabled: disabled || false,
+      configurable: configurable || true,
+      disableHitPolicy: disableHitPolicy || false,
+      activeRules: activeRules || [],
+      inputVariableType,
+      inputData,
+    });
+  }, [
+    inputsSchema,
+    outputsSchema,
+    value,
+    disabled,
+    configurable,
+    disableHitPolicy,
+    activeRules,
+    inputVariableType,
+    inputData
+  ]);
+
+  // Update listeners when props change
+  useEffect(() => {
+    listenerStore.setState({
+      onChange,
+      cellRenderer,
+      onColumnResize,
+    });
+  }, [onChange, cellRenderer, onColumnResize]);
 
   return (
     <DecisionTableStoreContext.Provider

@@ -3,7 +3,7 @@ import type { Monaco } from '@monaco-editor/react';
 import equal from 'fast-deep-equal/es6/react';
 import { produce } from 'immer';
 import type { WritableDraft } from 'immer/src/types/types-external';
-import React, { type MutableRefObject, createRef, useMemo } from 'react';
+import React, { type MutableRefObject, createRef, useEffect, useMemo } from 'react';
 import type { EdgeChange, NodeChange, ReactFlowInstance, useEdgesState, useNodesState } from 'reactflow';
 import { match } from 'ts-pattern';
 import type { StoreApi, UseBoundStore } from 'zustand';
@@ -137,11 +137,36 @@ export const DecisionGraphStoreContext = React.createContext<{
 }>({} as any);
 
 export type DecisionGraphContextProps = {
-  //
+  inputsSchema?: SchemaSelectProps[];
+  outputsSchema?: SchemaSelectProps[];
+  value?: DecisionGraphType;
+  disabled?: boolean;
+  configurable?: boolean;
+  simulate?: Simulation;
+  onChange?: (val: DecisionGraphType) => void;
+  onReactFlowInit?: (instance: ReactFlowInstance) => void;
+  onPanelsChange?: (val?: string) => void;
+  panels?: PanelType[];
+  components?: NodeSpecification[];
+  customNodes?: CustomNodeSpecification<object, any>[];
 };
 
 export const DecisionGraphProvider: React.FC<React.PropsWithChildren<DecisionGraphContextProps>> = (props) => {
-  const { children } = props;
+  const {
+    children,
+    inputsSchema,
+    outputsSchema,
+    value,
+    disabled,
+    configurable,
+    simulate,
+    onChange,
+    onReactFlowInit,
+    onPanelsChange,
+    panels,
+    components,
+    customNodes
+  } = props;
 
   const stateStore = useMemo(
     () =>
@@ -646,6 +671,41 @@ export const DecisionGraphProvider: React.FC<React.PropsWithChildren<DecisionGra
     }),
     [],
   );
+
+  // Update state when props change
+  useEffect(() => {
+    console.log('DecisionGraphProvider props changed:', { inputsSchema, outputsSchema });
+    stateStore.setState({
+      inputsSchema,
+      outputsSchema,
+      decisionGraph: value || { nodes: [], edges: [] },
+      disabled,
+      configurable,
+      simulate,
+      panels,
+      components: components || [],
+      customNodes: customNodes || [],
+    });
+  }, [
+    inputsSchema,
+    outputsSchema,
+    value,
+    disabled,
+    configurable,
+    simulate,
+    panels,
+    components,
+    customNodes
+  ]);
+
+  // Update listeners when props change
+  useEffect(() => {
+    listenerStore.setState({
+      onChange,
+      onPanelsChange,
+      onReactFlowInit,
+    });
+  }, [onChange, onPanelsChange, onReactFlowInit]);
 
   return (
     <DecisionGraphStoreContext.Provider

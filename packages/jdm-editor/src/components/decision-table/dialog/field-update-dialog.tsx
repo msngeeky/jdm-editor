@@ -71,7 +71,7 @@ export const FieldUpdate: React.FC<React.PropsWithChildren<FieldUpdateProps>> = 
         }}
       >
         {schema && (
-          <Form.Item label={'Choose from list'}>
+          <Form.Item label={'Choose from business object'}>
             <Cascader
               fieldNames={{ label: 'name', value: 'field', children: 'items' }}
               options={schema}

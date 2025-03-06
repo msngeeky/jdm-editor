@@ -1,6 +1,6 @@
 {
   "name": "@gorules/jdm-monorepo",
-  "private": true,
+  "private": false,
   "scripts": {
     "lerna": "lerna",
     "build": "lerna run build",

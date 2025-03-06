@@ -25,7 +25,7 @@ export const DecisionGraph = forwardRef<DecisionGraphRef, DecisionGraphProps>(
     return (
       <div className={'grl-dg'}>
         <ReactFlowProvider>
-          <DecisionGraphProvider>
+          <DecisionGraphProvider {...props}>
             <DecisionGraphWrapper
               ref={ref}
               reactFlowProOptions={reactFlowProOptions}

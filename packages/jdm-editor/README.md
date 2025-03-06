@@ -1,7 +1,6 @@
 ## JDM Editor
 
-JDM Editor is an open-source React component for crafting and designing JDM (JSON Decision model) files.
-Whether you’re a developer, data analyst, or decision model expert, JDM Editor can help you harness the full potential of decision modeling, making it more accessible and manageable than ever before
+Hash JDM Rule Editor is an open-source React component for crafting and designing Hash JDM (JSON Decision model) files. Whether you’re a developer, data analyst, or decision model expert, Hash JDM Editor can help you harness the full potential of decision modeling, making it more accessible and manageable than ever before
 
 <img width="945" alt="Rules Engine Editor" src="https://gorules.io/images/jdm-editor.gif">
 
@@ -11,7 +10,7 @@ Whether you’re a developer, data analyst, or decision model expert, JDM Editor
 ## Installation
 
 ```bash
-npm i @gorules/jdm-editor
+npm i @msngeeky/jdm-editor
 ```
 
 ## Usage
