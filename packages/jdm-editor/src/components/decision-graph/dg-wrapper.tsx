@@ -21,6 +21,7 @@ import { functionSpecification } from './nodes/specifications/function.specifica
 import { inputSpecification } from './nodes/specifications/input.specification';
 import { outputSpecification } from './nodes/specifications/output.specification';
 import { NodeKind } from './nodes/specifications/specification-types';
+import { timerSpecification } from './nodes/specifications/timer.specification';
 
 export type DecisionGraphWrapperProps = {
   reactFlowProOptions?: ProOptions;
@@ -92,6 +93,7 @@ const TabContents: React.FC = React.memo(() => {
             .with(NodeKind.Input, () => inputSpecification?.renderTab?.({ id: node?.id, manager: dndManager }))
             .with(NodeKind.Output, () => outputSpecification?.renderTab?.({ id: node?.id, manager: dndManager }))
             .with(NodeKind.ApiRequest, () => apiRequestSpecification?.renderTab?.({ id: node?.id, manager: dndManager }))
+            .with(NodeKind.TimerNode, () => timerSpecification?.renderTab?.({ id: node?.id, manager: dndManager }))
             .otherwise(() => {
               const component = components.find((cmp) => cmp.type === node.type);
               if (component) {

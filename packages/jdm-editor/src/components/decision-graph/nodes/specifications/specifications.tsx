@@ -7,6 +7,7 @@ import { outputSpecification } from './output.specification';
 import type { NodeSpecification } from './specification-types';
 import { NodeKind } from './specification-types';
 import { switchSpecification } from './switch.specification';
+import { timerSpecification } from './timer.specification';
 
 function makeNodeSpecification<T extends Record<NodeKind, V>, V extends NodeSpecification>(o: T): Readonly<T> {
   return o;
@@ -24,4 +25,5 @@ export const nodeSpecification = makeNodeSpecification({
   [NodeKind.Function]: functionSpecification,
   [NodeKind.Switch]: switchSpecification,
   [NodeKind.ApiRequest]: apiRequestSpecification,
+  [NodeKind.TimerNode]: timerSpecification,
 });

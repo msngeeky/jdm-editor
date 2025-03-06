@@ -6,6 +6,7 @@ import React, { useRef } from 'react';
 import { apiRequestToFunction } from '../../../helpers/api-request-to-function';
 import { exportExcelFile, readFromExcel } from '../../../helpers/excel-file-utils';
 import { decisionModelSchema } from '../../../helpers/schema';
+import { timerToFunction } from '../../../helpers/timer-to-function';
 import { useDecisionGraphActions, useDecisionGraphRaw, useDecisionGraphState } from '../context/dg-store.context';
 import { type DecisionEdge, type DecisionNode } from '../dg-types';
 import { NodeKind } from '../nodes/specifications/specification-types';
@@ -119,10 +120,13 @@ const downloadJDM = async () => {
     const { name } = decisionGraphRaw.stateStore.getState();
     const { decisionGraph } = decisionGraphRaw.stateStore.getState();
 
-    // Convert API request nodes to function nodes
+    // Convert API request and Timer nodes to function nodes
     const processedNodes = decisionGraph.nodes.map(node => {
       if (node.type === NodeKind.ApiRequest) {
         return apiRequestToFunction(node);
+      }
+      if (node.type === NodeKind.TimerNode) {
+        return timerToFunction(node);
       }
       return node;
     });

@@ -1,0 +1,49 @@
+.grl-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+
+  .timer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    .timer-icon {
+      font-size: 24px;
+      color: #1890ff;
+    }
+  }
+
+  .timer-type-selector {
+    margin-bottom: 16px;
+  }
+
+  .timer-config-section {
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .timer-duration-inputs {
+    display: flex;
+    gap: 16px;
+  }
+
+  .timer-help-text {
+    margin-top: 8px;
+  }
+
+  .timer-examples {
+    margin-top: 16px;
+  }
+
+  .timer-example-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}

@@ -14,6 +14,7 @@ export enum NodeKind {
   Expression = 'expressionNode',
   Switch = 'switchNode',
   ApiRequest = 'apiRequestNode',
+  TimerNode = 'timerNode',
 }
 
 export type MinimalNodeProps = Pick<NodeProps, 'id' | 'data' | 'selected'>;
